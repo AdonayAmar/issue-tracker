@@ -43,4 +43,7 @@ const IssuesPage = async () => {
   );
 };
 
+// Remove server cache layer
+export const dynamic = "force-dynamic";
+
 export default IssuesPage;
