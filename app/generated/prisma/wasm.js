@@ -126,7 +126,8 @@ exports.Prisma.IssueScalarFieldEnum = {
   description: 'description',
   status: 'status',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  assignedToUserId: 'assignedToUserId'
 };
 
 exports.Prisma.AccountScalarFieldEnum = {
@@ -170,14 +171,15 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
-exports.Prisma.IssueOrderByRelevanceFieldEnum = {
-  title: 'title',
-  description: 'description'
-};
-
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.IssueOrderByRelevanceFieldEnum = {
+  title: 'title',
+  description: 'description',
+  assignedToUserId: 'assignedToUserId'
 };
 
 exports.Prisma.AccountOrderByRelevanceFieldEnum = {
