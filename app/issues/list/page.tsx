@@ -5,9 +5,14 @@ import NextLink from "next/link";
 import IssueActions from "./IssueActions";
 import { Issue, Status } from "@/app/generated/prisma";
 import { ArrowUpIcon } from "@radix-ui/react-icons";
+import Pagination from "@/app/components/Pagination";
 
 interface Props {
-  searchParams: Promise<{ status: Status; orderBy: keyof Issue }>;
+  searchParams: Promise<{
+    status: Status;
+    orderBy: keyof Issue;
+    page: string;
+  }>;
 }
 
 const IssuesPage = async ({ searchParams }: Props) => {
@@ -21,23 +26,32 @@ const IssuesPage = async ({ searchParams }: Props) => {
     { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
   ];
 
-  const statuses = await searchParams;
-  const statusesList = Object.values(Status);
+  const statusParams = await searchParams;
+  const statuses = Object.values(Status);
 
-  const status = statusesList.includes(statuses.status)
-    ? statuses.status
+  const status = statuses.includes(statusParams.status)
+    ? statusParams.status
     : undefined;
+
+  const where = { status };
 
   const orderBy = columns
     .map((column) => column.value)
-    .includes(statuses.orderBy)
-    ? { [statuses.orderBy]: "asc" }
+    .includes(statusParams.orderBy)
+    ? { [statusParams.orderBy]: "asc" }
     : undefined;
 
+  const page = parseInt(statusParams.page) || 1;
+  const pageSize = 10;
+
   const issues = await prisma.issue.findMany({
-    where: { status },
+    where,
     orderBy,
+    skip: (page - 1) * pageSize,
+    take: pageSize,
   });
+
+  const issueCount = await prisma.issue.count({ where });
 
   return (
     <div>
@@ -52,12 +66,12 @@ const IssuesPage = async ({ searchParams }: Props) => {
               >
                 <NextLink
                   href={{
-                    query: { ...statuses, orderBy: column.value },
+                    query: { ...statusParams, orderBy: column.value },
                   }}
                 >
                   {column.label}
                 </NextLink>
-                {column.value === statuses.orderBy && (
+                {column.value === statusParams.orderBy && (
                   <ArrowUpIcon className="inline" />
                 )}
               </Table.ColumnHeaderCell>
@@ -83,6 +97,11 @@ const IssuesPage = async ({ searchParams }: Props) => {
           ))}
         </Table.Body>
       </Table.Root>
+      <Pagination
+        pageSize={pageSize}
+        currentPage={page}
+        itemCount={issueCount}
+      />
     </div>
   );
 };
