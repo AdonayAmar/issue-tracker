@@ -1,9 +1,9 @@
 import Pagination from "@/app/components/Pagination";
-import { Issue, Status } from "@/app/generated/prisma";
+import { Status } from "@/app/generated/prisma";
 import { prisma } from "@/prisma/client";
+import { Flex } from "@radix-ui/themes";
 import IssueActions from "./IssueActions";
 import IssueTable, { columnNames, IssueQuery } from "./IssueTable";
-import { Flex } from "@radix-ui/themes";
 
 interface Props {
   searchParams: Promise<IssueQuery>;
@@ -20,7 +20,7 @@ const IssuesPage = async ({ searchParams }: Props) => {
   const where = { status };
 
   const orderBy = columnNames.includes(statusParams.orderBy)
-    ? { [statusParams.orderBy]: "asc" }
+    ? { [statusParams.orderBy]: statusParams.sortedBy }
     : undefined;
 
   const page = parseInt(statusParams.page) || 1;

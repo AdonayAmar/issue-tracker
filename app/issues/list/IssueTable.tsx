@@ -1,12 +1,13 @@
 import { IssueStatusBadge, Link } from "@/app/components";
 import { Issue, Status } from "@/app/generated/prisma/client";
-import { ArrowUpIcon } from "@radix-ui/react-icons";
+import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
 import { Table } from "@radix-ui/themes";
 import NextLink from "next/link";
 
 export interface IssueQuery {
   status: Status;
   orderBy: keyof Issue;
+  sortedBy: "asc" | "desc";
   page: string;
 }
 
@@ -16,6 +17,14 @@ interface Props {
 }
 
 const IssueTable = ({ searchParams, issues }: Props) => {
+  const sortHandler = () => {
+    if (searchParams.sortedBy === "asc") {
+      return "desc";
+    } else {
+      return "asc";
+    }
+  };
+
   return (
     <Table.Root variant="surface">
       <Table.Header>
@@ -27,14 +36,23 @@ const IssueTable = ({ searchParams, issues }: Props) => {
             >
               <NextLink
                 href={{
-                  query: { ...searchParams, orderBy: column.value },
+                  query: {
+                    ...searchParams,
+                    orderBy: column.value,
+                    sortedBy: sortHandler(),
+                  },
                 }}
               >
                 {column.label}
               </NextLink>
-              {column.value === searchParams.orderBy && (
-                <ArrowUpIcon className="inline" />
-              )}
+              {column.value === searchParams.orderBy &&
+                searchParams.sortedBy === "asc" && (
+                  <ArrowUpIcon className="inline" />
+                )}
+              {column.value === searchParams.orderBy &&
+                searchParams.sortedBy === "desc" && (
+                  <ArrowDownIcon className="inline" />
+                )}
             </Table.ColumnHeaderCell>
           ))}
         </Table.Row>
