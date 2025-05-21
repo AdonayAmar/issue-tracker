@@ -18,4 +18,9 @@ const EditIssuePage = async ({
   return <IssueForm issue={issue} />;
 };
 
+export const metadata = {
+  title: "Issue Tracker - Edit Issue",
+  description: "Edit an issues",
+};
+
 export default EditIssuePage;
