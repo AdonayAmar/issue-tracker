@@ -242,7 +242,7 @@ const config = {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "mysql://root:pass@localhost:3306/issue-tracker"
+        "value": "mysql://root:WEBSCxWUwMtciphNwoIDTSvsmXrZfUum@maglev.proxy.rlwy.net:20367/railway"
       }
     }
   },
