@@ -10,20 +10,15 @@ import AssigneeSelect from "./AssigneeSelect";
 import { cache } from "react";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 const fetchUser = cache((issueId: number) =>
   prisma.issue.findUnique({ where: { id: issueId } })
 );
 
-const IssueDetailPage = async ({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) => {
+const IssueDetailPage = async ({ params }: Props) => {
   const id = (await params).id;
-
   const session = await getServerSession(authOptions);
   const issue = await fetchUser(parseInt(id));
 
