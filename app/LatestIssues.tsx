@@ -26,7 +26,10 @@ const LatestIssues = async () => {
                 <Flex justify="between">
                   <Flex direction="column" align="start" gap="2">
                     <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
-                    <IssueStatusBadge status={issue.status} />
+                    <IssueStatusBadge
+                      status={issue.status}
+                      issueId={issue.id}
+                    />
                   </Flex>
                   {issue.assignedToUser && (
                     <Avatar
