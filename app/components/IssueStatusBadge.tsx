@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Issue, Status } from "../generated/prisma/client";
+import { Status } from "../generated/prisma/client";
 import { Badge, Select } from "@radix-ui/themes";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
@@ -47,7 +47,7 @@ const IssueStatusBadge = ({ status, issueId }: Props) => {
         onValueChange={assignStatus}
       >
         <Select.Trigger />
-        <Select.Content>
+        <Select.Content className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
           {statuses.map((status) => (
             <Select.Item key={status.label} value={status.value}>
               <Badge color={status.color}>{status.label}</Badge>

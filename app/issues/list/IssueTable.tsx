@@ -1,7 +1,8 @@
-import { IssueStatusBadge, Link } from "@/app/components";
+import { IssueStatusBadge, Link, AssigneeSelect } from "@/app/components";
 import { Issue, Status } from "@/app/generated/prisma/client";
+import { prisma } from "@/prisma/client";
 import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
-import { Table } from "@radix-ui/themes";
+import { Avatar, Flex, Table, Text } from "@radix-ui/themes";
 import NextLink from "next/link";
 
 export interface IssueQuery {
@@ -13,10 +14,9 @@ export interface IssueQuery {
 
 interface Props {
   searchParams: IssueQuery;
-  issues: Issue[];
 }
 
-const IssueTable = ({ searchParams, issues }: Props) => {
+const IssueTable = async ({ searchParams }: Props) => {
   const sortHandler = () => {
     if (searchParams.sortedBy === "asc") {
       return "desc";
@@ -24,6 +24,12 @@ const IssueTable = ({ searchParams, issues }: Props) => {
       return "asc";
     }
   };
+
+  const issues = await prisma.issue.findMany({
+    include: {
+      assignedToUser: true,
+    },
+  });
 
   return (
     <Table.Root variant="surface">
@@ -72,6 +78,19 @@ const IssueTable = ({ searchParams, issues }: Props) => {
             <Table.Cell className="hidden md:table-cell">
               {issue.createdAt.toDateString()}
             </Table.Cell>
+            <Table.Cell className="hidden md:table-cell">
+              <Flex direction="row" align="center" gap="2">
+                <AssigneeSelect issue={issue} />
+                {issue.assignedToUser && (
+                  <Avatar
+                    src={issue.assignedToUser!.image!}
+                    fallback="?"
+                    size="2"
+                    radius="full"
+                  />
+                )}
+              </Flex>
+            </Table.Cell>
           </Table.Row>
         ))}
       </Table.Body>
@@ -81,12 +100,17 @@ const IssueTable = ({ searchParams, issues }: Props) => {
 
 const columns: {
   label: string;
-  value: keyof Issue;
+  value: keyof Issue | "assignedToUser";
   className?: string;
 }[] = [
   { label: "Issue", value: "title" },
   { label: "Status", value: "status", className: "hidden md:table-cell" },
   { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
+  {
+    label: "Assigned User",
+    value: "assignedToUser",
+    className: "hidden md:table-cell",
+  },
 ];
 
 export const columnNames = columns.map((column) => column.value);
